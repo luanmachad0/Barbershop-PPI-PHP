@@ -66,26 +66,21 @@ body {
   <link href="signin.css" rel="stylesheet">
 </head>
 <body class="text-center">
-  <form class="form-signin">
+  <form class="form-signin" action="loginBarbearia.php" method="post">
 <img class="mb-4" src="logoLogin.jpg" alt="" width="400" height="400">
 <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
 <label for="inputEmail" class="sr-only">Email address</label>
-<input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+<input name="email"  type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
 <label for="inputPassword" class="sr-only">Password</label>
-<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+<input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
 <div class="checkbox mb-3">
   <label>
     <input type="checkbox" value="remember-me"> Remember me
   </label>
 </div>
-<button type="button" class="btn btn-lg btn-primary btn-block">Sign in</button>
-<form class="form-signin">
-<button type="button" class="btn btn-lg btn-primary btn-block">Sign up</button>
+<button type="submit" class="btn btn-lg btn-primary btn-block" name="signin">Sign in</button>
+<button type="submit" class="btn btn-lg btn-primary btn-block" name="signup">Sign up</button>
 </form>
-
-</form>
-
-
 </body>
 <?php
 function db_connect($host,$user,$pass,$db) {
@@ -102,6 +97,34 @@ return $mysqli;
 }
 
 $mysqli = db_connect('localhost','root','','barbershop');
+
+if(isset($_POST['signin'])){
+  $login = $_POST['email'];
+  $senha = $_POST['password'];
+  $connect = mysqli_connect('localhost','root','', 'barbershop');
+
+             
+      $verifica = mysqli_query($connect, "SELECT * FROM user WHERE user = 
+      '$login' AND senha = '$senha'") or die("erro ao selecionar");
+        if (mysqli_num_rows($verifica)<=0){
+          echo"<script language='javascript' type='text/javascript'>
+          alert('Login e/ou senha incorretos');window.location
+          .href='loginBarbearia.php';</script>";
+          die();
+        }else{
+          setcookie("login",$login);
+          header("Location:index.php");
+        }
+}
+
+if(isset($_POST['signup'])){
+  $email_banco = $_POST['email'];
+  $password_banco = $_POST['password'];
+  $link = mysqli_connect("localhost", "root", "", "barbershop");
+  $result_cadastro = "INSERT INTO user (user, senha) VALUES ('$email_banco', '$password_banco')"; 
+  $resultado_cadastro = mysqli_query($link, $result_cadastro);
+  echo '<script>alert("Usuário cadastrado com sucesso!");</script>';
+}
 
 ?>
 
