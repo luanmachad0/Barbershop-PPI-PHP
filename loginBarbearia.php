@@ -60,12 +60,29 @@ body {
     background-color: white;
 }
 
-   
-  </style>
-  <!-- Custom styles for this template -->
-  <link href="signin.css" rel="stylesheet">
+  
+</style>
+<!-- Custom styles for this template -->
+<link href="signin.css" rel="stylesheet">
 </head>
 <body class="text-center">
+<<<<<<< HEAD
+   <form class="form-signin" action="loginBarbearia.php" method="post">
+      <img class="mb-4" src="logoLogin.jpg" alt="" width="400" height="400">
+      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+      <label for="inputEmail" class="sr-only">Email address</label>
+      <input name="email"  type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+      <label for="inputPassword" class="sr-only">Password</label>
+      <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+      <div class="checkbox mb-3">
+         <label>
+         <input type="checkbox" value="remember-me"> Remember me
+         </label>
+      </div>
+      <button type="submit" class="btn btn-lg btn-primary btn-block" name="signin">Sign in</button>
+      <button type="submit" class="btn btn-lg btn-primary btn-block" name="signup">Sign up</button>
+   </form>
+=======
   <form class="form-signin" action="loginBarbearia.php" method="post">
 <img class="mb-4" src="logoLogin.jpg" alt="" width="400" height="400">
 <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
@@ -81,22 +98,57 @@ body {
 <button type="submit" class="btn btn-lg btn-primary btn-block" name="signin">Sign in</button>
 <button type="submit" class="btn btn-lg btn-primary btn-block" name="signup">Sign up</button>
 </form>
+>>>>>>> 49842533022d029932f3dad3eeb97ceaa0c3396b
 </body>
 <?php
-function db_connect($host,$user,$pass,$db) {
-
-$mysqli = new mysqli($host, $user, $pass, $db);
-
-$mysqli->set_charset("utf8");
-
-if($mysqli->connect_error) 
-  die('Connect Error (' . mysqli_connect_errno() . ') '. mysqli_connect_error());
-
-
-return $mysqli;
+session_start();
+function db_connect($host, $user, $pass, $db)
+{
+    
+    $mysqli = new mysqli($host, $user, $pass, $db);
+    
+    $mysqli->set_charset("utf8");
+    
+    if ($mysqli->connect_error)
+        die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+    
+    
+    return $mysqli;
 }
 
-$mysqli = db_connect('localhost','root','','barbershop');
+$mysqli = db_connect('localhost', 'root', '', 'barbershop');
+
+if (isset($_POST['signin'])) {
+    $login   = $_POST['email'];
+    $senha   = $_POST['password'];
+    $connect = mysqli_connect('localhost', 'root', '', 'barbershop');
+    
+    
+    $verifica = mysqli_query($connect, "SELECT * FROM user WHERE user = 
+      '$login' AND senha = '$senha'") or die("erro ao selecionar");
+    if (mysqli_num_rows($verifica) <= 0) {
+        unset($_SESSION['login']);
+        unset($_SESSION['senha']);
+        echo "<script language='javascript' type='text/javascript'>
+          alert('Login e/ou senha incorretos');window.location
+          .href='loginBarbearia.php';</script>";
+        die();
+    } else {
+        
+        $_SESSION['login'] = $login;
+        $_SESSION['senha'] = $senha;
+        header("Location:index.php");
+    }
+}
+
+if (isset($_POST['signup'])) {
+    $email_banco        = $_POST['email'];
+    $password_banco     = $_POST['password'];
+    $link               = mysqli_connect("localhost", "root", "", "barbershop");
+    $result_cadastro    = "INSERT INTO user (user, senha) VALUES ('$email_banco', '$password_banco')";
+    $resultado_cadastro = mysqli_query($link, $result_cadastro);
+    echo '<script>alert("Usuário cadastrado com sucesso!");</script>';
+}
 
 if(isset($_POST['signin'])){
   $login = $_POST['email'];
@@ -127,5 +179,4 @@ if(isset($_POST['signup'])){
 }
 
 ?>
-
 </html>
